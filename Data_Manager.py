@@ -1,7 +1,11 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-SHEETY_get_ENDPOINT = "YOUR_SHEETY_GET_ENDPOINT_API"
-SHEETY_put_ENDPOINT = "YOUR_SHEETY_PUT_ENDPOINT_API"
+load_dotenv()
+
+SHEETY_get_ENDPOINT = os.environ["SHEETY_GET_ENDPOINT"]
+SHEETY_put_ENDPOINT = os.environ["SHEETY_PUT_ENDPOINT"]
 
 
 class DataManager:
@@ -21,13 +25,14 @@ class DataManager:
 
             response = requests.put(
                 url=f"{SHEETY_put_ENDPOINT}/{city['id']}", json=new_data)
+            print(response.text)
 
     def update_price_info(self, row_id, row_adults, row_children, offer):
         new_data = {
             "price": {
                 "adults": row_adults,
                 "children": row_children,
-                "minPrice": f"{offer["price"]["total"]}",
+                "minPrice": f"{offer["price"]["total"]} ₪",
                 "flightCode": f"{offer["itineraries"][0]["segments"][0]["carrierCode"]} - {offer["itineraries"][0]["segments"][0]["number"]}",
                 "originAirport": offer["itineraries"][0]["segments"][0]["departure"]["iataCode"],
                 "departureDate": offer["itineraries"][0]["segments"][0]["departure"]["at"].replace('T', ' '),
@@ -38,3 +43,5 @@ class DataManager:
 
         response = requests.put(
             url=f"{SHEETY_put_ENDPOINT}/{row_id}", json=new_data)
+
+        print(f"updated row {row_id}: ", response.status_code, response.text)
