@@ -1,5 +1,9 @@
+import os
 import requests
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
+
+load_dotenv()
 
 TOKEN_ENDPOINT = "https://test.api.amadeus.com/v1/security/oauth2/token"
 FLIGHT_ENDPOINT = "https://test.api.amadeus.com/v2/shopping/flight-offers"
@@ -10,10 +14,10 @@ FLIGHT_OFFER_ENDPOINT = "https://test.api.amadeus.com/v2/shopping/flight-offers"
 class FlightSearch:
 
     def __init__(self):
-        self.api_key = "YOUR_AMADEUS_API_KEY"
-        self.api_secret = "YOUR_AMADEUS_API_SECRET"
+        self.api_key = os.environ["AMADEUS_API_KEY"]
+        self.api_secret = os.environ["AMADEUS_API_SECRET"]
         self.api_token = self.get_token()
-        self.default_airpot = self.get_iataCode("SET_ORIGIN_IATI_CITY_CODE")
+        self.default_airpot = self.get_iataCode("Tel Aviv")
 
     def get_token(self):
 
@@ -82,6 +86,7 @@ class FlightSearch:
             "returnDate": six_month.strftime("%Y-%m-%d"),
             "adults": adults,
             "children": children,
+            "currencyCode": "ILS",
             "max": "4",
         }
 
